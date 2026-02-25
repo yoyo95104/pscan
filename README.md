@@ -7,9 +7,10 @@ Pscan is a Network Scanner That detects packets and can log them to a pcap file 
   * Make
 # Installation
   Clone the repository
-  ```bash git clone https://github.com/yoyo95104/pscan.git
+  ~~~
+    git clone https://github.com/yoyo95104/pscan.git 
     cd pscan
-  ```
+  ~~~
   Then make the Program
   `make`
   And export the binary
