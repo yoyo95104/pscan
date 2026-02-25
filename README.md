@@ -12,12 +12,18 @@ Pscan is a Network Scanner That detects packets and can log them to a pcap file 
     cd pscan
   ~~~
   Then make the Program
-  `make`
+  ~~~
+  make
+  ~~~  
   And export the binary
-  `export $PATH=$PATH:your/dir/pscan`
+  ~~~
+  export $PATH=$PATH:your/dir/pscan
+  ~~~
   # Notice
   You have to run this program with sudo or as root
   # Debugging 
   If the kernel module refused to unload , unload it like this
-  ```bash sudo rmmod filter```
+  ~~~
+   bash sudo rmmod filter
+  ~~~
   or Restart
