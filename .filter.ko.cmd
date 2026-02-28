@@ -1,1 +1,0 @@
-savedcmd_/home/yahia/pscan/filter.ko := ld -r -m elf_x86_64 -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T scripts/module.lds -o /home/yahia/pscan/filter.ko /home/yahia/pscan/filter.o /home/yahia/pscan/filter.mod.o /home/yahia/pscan/.module-common.o
