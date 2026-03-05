@@ -42,20 +42,20 @@ int main(int argc, char *argv[]) {
                              {"help", no_argument, 0, 'h'},
                              {"filter", required_argument, 0, OPT_FILTER},
                              {"interface", required_argument, 0, 'i'},
-                             {"version" , no_argument , 0 , 'v'},
-                             {"count" , required_argument , 0 , 'c'},
+                             {"version", no_argument, 0, 'v'},
+                             {"count", required_argument, 0, 'c'},
                              {0, 0, 0, 0}};
   int opt;
-  while ((opt = getopt_long(argc, argv, "f:hi:c:", options, NULL)) != -1) {
+  while ((opt = getopt_long(argc, argv, "f:hi:c:b:", options, NULL)) != -1) {
     switch (opt) {
     case 'f':
       filename = optarg;
       break;
     case OPT_FILTER:
-      struct filter_args args = { NULL , NULL , 0 , 0};
+      struct filter_args args = {NULL, NULL, 0, 0, 0, 0};
       parse_filter_string(optarg, &args);
       char *params = parse_filter(&args);
-      printf("params: %s" , params);
+      printf("params: %s", params);
       if (load_module(params) == 0)
         module_loaded = 1;
       free(args.ip);
@@ -65,16 +65,17 @@ int main(int argc, char *argv[]) {
       interface = optarg;
       break;
     case 'v':
-        printf("Version: %s\nBuild Date: %s\n" , APP_VERSION , BUILD_DATE);
-        break;
+      printf("Version: %s\nBuild Date: %s\n", APP_VERSION, BUILD_DATE);
+      break;
     case 'c':
-        count = atoi(optarg);
-        break;
+      count = atoi(optarg);
+      break;
     default:
-      fprintf(stderr,
-              "Usage: %s [-f filename] [-filter \" targetport ip dip proto \"] [-i "
-              "interface name][--version][--count int]\n",
-              argv[0]);
+      fprintf(
+          stderr,
+          "Usage: %s [-f filename] [-filter \" targetport ip dip proto startrange endrange\"] [-i "
+          "interface name][--version][--count int]\n",
+          argv[0]);
       exit(EXIT_FAILURE);
     }
   }
@@ -82,7 +83,8 @@ int main(int argc, char *argv[]) {
   if (fd < 0)
     return 1;
   int version = TPACKET_V3;
-  if (setsockopt(fd, SOL_PACKET, PACKET_VERSION, &version, sizeof(version)) == -1)
+  if (setsockopt(fd, SOL_PACKET, PACKET_VERSION, &version, sizeof(version)) ==
+      -1)
     perror("T3_PACKET_VERSION");
   struct tpacket_req3 req;
   memset(&req, 0, sizeof(req));
@@ -93,7 +95,7 @@ int main(int argc, char *argv[]) {
   req.tp_retire_blk_tov = 60;
   req.tp_sizeof_priv = TPACKET_ALIGN(sizeof(struct priv));
   req.tp_feature_req_word = TP_FT_REQ_FILL_RXHASH;
-  if (setsockopt(fd, SOL_PACKET, PACKET_RX_RING, &req, sizeof(req)) ==  -1)
+  if (setsockopt(fd, SOL_PACKET, PACKET_RX_RING, &req, sizeof(req)) == -1)
     perror("Packet_RX_RING");
   if (interface) {
     struct sockaddr_ll sll;
@@ -108,9 +110,9 @@ int main(int argc, char *argv[]) {
       perror("bind");
   }
   signal(SIGINT, handle_sigint);
-  scan(fd, req, filename , count);
+  scan(fd, req, filename, count);
   if (module_loaded == 1) {
-      unload_module();
+    unload_module();
   }
   close(fd);
   return 0;

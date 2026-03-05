@@ -40,12 +40,10 @@ void scan(int fd, struct tpacket_req3 req, char *file, int count) {
       perror("fopen");
     else
       setvbuf(fp, NULL, _IOFBF, 1 << 20);
-
     char *ext = strrchr(file, '.');
     if (ext && ext != file) {
       *ext = '\0';
       global_ext = ext + 1;
-
       if (strcmp(global_ext, "pcap") == 0) {
         struct pcap_global_header gh = {.magic_number = 0xa1b2c3d4,
                                         .version_major = 2,
@@ -70,7 +68,7 @@ void scan(int fd, struct tpacket_req3 req, char *file, int count) {
   struct pollfd pfd = {.fd = fd, .events = POLLIN};
   int block_idx = 0;
   while (running) {
-    if (counter == count)
+    if (count > 0 && counter >= count)
       break;
     struct tpacket_block_desc *block_hdr =
         (struct tpacket_block_desc *)(rx_ring + block_idx * req.tp_block_size);
@@ -79,8 +77,6 @@ void scan(int fd, struct tpacket_req3 req, char *file, int count) {
       if (ret < 0)
         perror("poll");
     }
-    if (!running)
-      break;
     int num_pkts = block_hdr->hdr.bh1.num_pkts;
     if (num_pkts == 0) {
       block_hdr->hdr.bh1.block_status = TP_STATUS_KERNEL;
